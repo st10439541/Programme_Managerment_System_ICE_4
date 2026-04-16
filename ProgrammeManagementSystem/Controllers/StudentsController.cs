@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProgrammeManagementSystem.Data;
 using ProgrammeManagementSystem.Models;
@@ -33,34 +28,25 @@ namespace ProgrammeManagementSystem.Controllers
         // GET: Students/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var student = await _context.Students
                 .Include(s => s.Registrations)
                 .ThenInclude(r => r.Module)
                 .FirstOrDefaultAsync(m => m.StudentID == id);
 
-            if (student == null)
-            {
-                return NotFound();
-            }
+            if (student == null) return NotFound();
 
             return View(student);
         }
 
         // GET: Students/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         // POST: Students/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StudentID,FirstName,LastName,Email,PhoneNumber,YearOfStudy")] Student student)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email,PhoneNumber,YearOfStudy")] Student student)
         {
             // Check for duplicate email
             var existingStudent = await _context.Students
@@ -84,16 +70,9 @@ namespace ProgrammeManagementSystem.Controllers
         // GET: Students/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var student = await _context.Students.FindAsync(id);
-            if (student == null)
-            {
-                return NotFound();
-            }
+            if (student == null) return NotFound();
             return View(student);
         }
 
@@ -102,10 +81,7 @@ namespace ProgrammeManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("StudentID,FirstName,LastName,Email,PhoneNumber,YearOfStudy")] Student student)
         {
-            if (id != student.StudentID)
-            {
-                return NotFound();
-            }
+            if (id != student.StudentID) return NotFound();
 
             // Check for duplicate email (excluding current student)
             var existingStudent = await _context.Students
@@ -126,14 +102,8 @@ namespace ProgrammeManagementSystem.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StudentExists(student.StudentID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!StudentExists(student.StudentID)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -143,19 +113,13 @@ namespace ProgrammeManagementSystem.Controllers
         // GET: Students/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var student = await _context.Students
                 .Include(s => s.Registrations)
                 .FirstOrDefaultAsync(m => m.StudentID == id);
 
-            if (student == null)
-            {
-                return NotFound();
-            }
+            if (student == null) return NotFound();
 
             // Show warning if student has registrations
             if (student.Registrations.Any())
@@ -178,34 +142,11 @@ namespace ProgrammeManagementSystem.Controllers
 
             if (student != null)
             {
-                // Registrations will be deleted automatically due to Cascade delete in DbContext
                 _context.Students.Remove(student);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = $"Student {student.FirstName} {student.LastName} deleted successfully.";
             }
-
             return RedirectToAction(nameof(Index));
-        }
-
-        // GET: Students/Registrations/5 - View all modules for a specific student
-        public async Task<IActionResult> StudentModules(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await _context.Students
-                .Include(s => s.Registrations)
-                .ThenInclude(r => r.Module)
-                .FirstOrDefaultAsync(s => s.StudentID == id);
-
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            return View(student);
         }
 
         private bool StudentExists(int id)

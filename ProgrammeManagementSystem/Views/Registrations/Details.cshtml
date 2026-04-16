@@ -1,36 +1,47 @@
 ﻿@model ProgrammeManagementSystem.Models.Registration
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Registration Details";
 }
 
-<h1>Details</h1>
+<h1>Registration Details</h1>
 
-<div>
-    <h4>Registration</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateRegistered)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateRegistered)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Student)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Student.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Module)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Module.AcademicYear)
-        </dd>
-    </dl>
+<div class="card">
+    <div class="card-body">
+        <h4>Student Module Registration</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">Student Name</dt>
+            <dd class="col-sm-9">@(Model.Student?.FirstName) @(Model.Student?.LastName)</dd>
+
+            <dt class="col-sm-3">Student Email</dt>
+            <dd class="col-sm-9">@(Model.Student?.Email)</dd>
+
+            <dt class="col-sm-3">Phone Number</dt>
+            <dd class="col-sm-9">@(Model.Student?.PhoneNumber ?? "Not provided")</dd>
+
+            <dt class="col-sm-3">Year of Study</dt>
+            <dd class="col-sm-9">Year @(Model.Student?.YearOfStudy)</dd>
+
+            <dt class="col-sm-3">Module Name</dt>
+            <dd class="col-sm-9">@(Model.Module?.ModuleName)</dd>
+
+            <dt class="col-sm-3">Module Code</dt>
+            <dd class="col-sm-9">@(Model.Module?.ModuleCode)</dd>
+
+            <dt class="col-sm-3">Credits</dt>
+            <dd class="col-sm-9">@(Model.Module?.Credits)</dd>
+
+            <dt class="col-sm-3">Academic Year</dt>
+            <dd class="col-sm-9">@(Model.Module?.AcademicYear)</dd>
+
+            <dt class="col-sm-3">Date Registered</dt>
+            <dd class="col-sm-9">@Model.DateRegistered.ToShortDateString()</dd>
+        </dl>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.RegistrationID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-3">
+    <a asp-action="Delete" asp-route-id="@Model?.RegistrationID" class="btn btn-danger">Unregister</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

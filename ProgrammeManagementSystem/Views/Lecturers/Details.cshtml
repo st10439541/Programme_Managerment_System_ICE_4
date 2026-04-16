@@ -1,42 +1,76 @@
 ﻿@model ProgrammeManagementSystem.Models.Lecturer
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Lecturer Details";
 }
 
-<h1>Details</h1>
+<h1>Lecturer Details</h1>
 
-<div>
-    <h4>Lecturer</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Department)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Department)
-        </dd>
-    </dl>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h4>Personal Information</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Full Name</dt>
+                    <dd class="col-sm-8">@Model.FirstName @Model.LastName</dd>
+
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">@Model.Email</dd>
+
+                    <dt class="col-sm-4">Department</dt>
+                    <dd class="col-sm-8">@Model.Department</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4>Assigned Modules (@Model.ModuleAssignments.Count)</h4>
+            </div>
+            <div class="card-body">
+                @if (Model.ModuleAssignments.Any())
+                {
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Module Code</th>
+                                <th>Module Name</th>
+                                <th>Credits</th>
+                                <th>Academic Year</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var assignment in Model.ModuleAssignments.OrderBy(a => a.Module?.ModuleCode))
+                            {
+                                <tr>
+                                    <td>@assignment.Module?.ModuleCode</td>
+                                    <td>@assignment.Module?.ModuleName</td>
+                                    <td>@assignment.Module?.Credits</td>
+                                    <td>@assignment.Module?.AcademicYear</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        No modules assigned yet.
+                        <a asp-controller="ModuleAssignments" asp-action="Create">Assign a module</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.LecturerID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model?.LecturerID" class="btn btn-warning">Edit</a>
+    <a asp-controller="ModuleAssignments" asp-action="Create" class="btn btn-success">Assign Module</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

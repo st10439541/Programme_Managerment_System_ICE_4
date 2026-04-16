@@ -1,4 +1,5 @@
 ﻿@model ProgrammeManagementSystem.Models.Registration
+
 @{
     ViewData["Title"] = "Register Student for Module";
 }
@@ -7,14 +8,13 @@
 <hr />
 
 <div class="row">
-    <div class="col-md-5">
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
             <div class="mb-3">
                 <label asp-for="StudentID" class="form-label">Student</label>
-                <select asp-for="StudentID" class="form-select"
-                        asp-items="ViewBag.StudentID">
+                <select asp-for="StudentID" class="form-select" asp-items="ViewBag.StudentID">
                     <option value="">-- Select Student --</option>
                 </select>
                 <span asp-validation-for="StudentID" class="text-danger"></span>
@@ -22,8 +22,7 @@
 
             <div class="mb-3">
                 <label asp-for="ModuleID" class="form-label">Module</label>
-                <select asp-for="ModuleID" class="form-select"
-                        asp-items="ViewBag.ModuleID">
+                <select asp-for="ModuleID" class="form-select" asp-items="ViewBag.ModuleID">
                     <option value="">-- Select Module --</option>
                 </select>
                 <span asp-validation-for="ModuleID" class="text-danger"></span>
@@ -39,5 +38,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
 }
