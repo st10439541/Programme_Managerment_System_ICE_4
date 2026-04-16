@@ -46,3 +46,14 @@
     <a asp-action="Edit" asp-route-id="@Model?.StudentID">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@if (Model.Registrations.Any())
+{
+    <h4>Registered Modules</h4>
+    <ul>
+        @foreach (var reg in Model.Registrations)
+        {
+            <li>@reg.Module?.ModuleName (@reg.Module?.ModuleCode) - Registered: @reg.DateRegistered.ToShortDateString()</li>
+        }
+    </ul>
+}

@@ -1,47 +1,46 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PMS</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-      <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">📚 PMS</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" asp-controller="Students"          asp-action="Index">Students</a></li>
-          <li class="nav-item"><a class="nav-link" asp-controller="Lecturers"         asp-action="Index">Lecturers</a></li>
-          <li class="nav-item"><a class="nav-link" asp-controller="Modules"           asp-action="Index">Modules</a></li>
-          <li class="nav-item"><a class="nav-link" asp-controller="Registrations"     asp-action="Index">Registrations</a></li>
-          <li class="nav-item"><a class="nav-link" asp-controller="ModuleAssignments" asp-action="Index">Assignments</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - Programme Management System</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">📋 PMS</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Students" asp-action="Index">Students</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Lecturers" asp-action="Index">Lecturers</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Modules" asp-action="Index">Modules</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="ModuleAssignments" asp-action="Index">Assignments</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Registrations" asp-action="Index">Registrations</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-  <main class="container my-4">
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="container mt-4">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @RenderBody()
         </div>
-    }
-    @RenderBody()
-  </main>
 
-  <footer class="bg-light text-center text-muted py-3 border-top">
-    <small>Programme Management System &copy; @DateTime.Now.Year</small>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  @await RenderSectionAsync("Scripts", required: false)
-</body>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 </html>

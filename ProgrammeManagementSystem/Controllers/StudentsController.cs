@@ -22,7 +22,12 @@ namespace ProgrammeManagementSystem.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Students.ToListAsync());
+            var students = await _context.Students
+                .Include(s => s.Registrations)
+                .ThenInclude(r => r.Module)
+                .OrderBy(s => s.LastName)
+                .ToListAsync();
+            return View(students);
         }
 
         // GET: Students/Details/5
@@ -34,7 +39,10 @@ namespace ProgrammeManagementSystem.Controllers
             }
 
             var student = await _context.Students
+                .Include(s => s.Registrations)
+                .ThenInclude(r => r.Module)
                 .FirstOrDefaultAsync(m => m.StudentID == id);
+
             if (student == null)
             {
                 return NotFound();
@@ -50,16 +58,24 @@ namespace ProgrammeManagementSystem.Controllers
         }
 
         // POST: Students/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("StudentID,FirstName,LastName,Email,PhoneNumber,YearOfStudy")] Student student)
         {
+            // Check for duplicate email
+            var existingStudent = await _context.Students
+                .FirstOrDefaultAsync(s => s.Email == student.Email);
+
+            if (existingStudent != null)
+            {
+                ModelState.AddModelError("Email", "A student with this email already exists.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(student);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = $"Student {student.FirstName} {student.LastName} added successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(student);
@@ -82,8 +98,6 @@ namespace ProgrammeManagementSystem.Controllers
         }
 
         // POST: Students/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("StudentID,FirstName,LastName,Email,PhoneNumber,YearOfStudy")] Student student)
@@ -93,12 +107,22 @@ namespace ProgrammeManagementSystem.Controllers
                 return NotFound();
             }
 
+            // Check for duplicate email (excluding current student)
+            var existingStudent = await _context.Students
+                .FirstOrDefaultAsync(s => s.Email == student.Email && s.StudentID != student.StudentID);
+
+            if (existingStudent != null)
+            {
+                ModelState.AddModelError("Email", "A student with this email already exists.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(student);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = $"Student {student.FirstName} {student.LastName} updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,10 +149,19 @@ namespace ProgrammeManagementSystem.Controllers
             }
 
             var student = await _context.Students
+                .Include(s => s.Registrations)
                 .FirstOrDefaultAsync(m => m.StudentID == id);
+
             if (student == null)
             {
                 return NotFound();
+            }
+
+            // Show warning if student has registrations
+            if (student.Registrations.Any())
+            {
+                ViewBag.HasRegistrations = true;
+                ViewBag.RegistrationCount = student.Registrations.Count;
             }
 
             return View(student);
@@ -139,14 +172,40 @@ namespace ProgrammeManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _context.Students.FindAsync(id);
+            var student = await _context.Students
+                .Include(s => s.Registrations)
+                .FirstOrDefaultAsync(s => s.StudentID == id);
+
             if (student != null)
             {
+                // Registrations will be deleted automatically due to Cascade delete in DbContext
                 _context.Students.Remove(student);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = $"Student {student.FirstName} {student.LastName} deleted successfully.";
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Students/Registrations/5 - View all modules for a specific student
+        public async Task<IActionResult> StudentModules(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var student = await _context.Students
+                .Include(s => s.Registrations)
+                .ThenInclude(r => r.Module)
+                .FirstOrDefaultAsync(s => s.StudentID == id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            return View(student);
         }
 
         private bool StudentExists(int id)
