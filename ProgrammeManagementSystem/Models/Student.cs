@@ -26,5 +26,7 @@ namespace ProgrammeManagementSystem.Models
 
         // Navigation property
         public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+
+        public string FullName => $"{FirstName} {LastName}";
     }
 }

@@ -24,5 +24,7 @@ namespace ProgrammeManagementSystem.Models
         // Navigation properties
         public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
         public ICollection<ModuleAssignment> ModuleAssignments { get; set; } = new List<ModuleAssignment>();
+
+        public string ModuleDisplay => $"{ModuleCode} - {ModuleName}";
     }
 }

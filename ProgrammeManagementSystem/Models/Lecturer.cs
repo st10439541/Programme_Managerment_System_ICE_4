@@ -22,6 +22,8 @@ namespace ProgrammeManagementSystem.Models
 
         // Navigation property
         public ICollection<ModuleAssignment> ModuleAssignments { get; set; } = new List<ModuleAssignment>();
+
+        public string FullName => $"{FirstName} {LastName}";
     }
 }
 

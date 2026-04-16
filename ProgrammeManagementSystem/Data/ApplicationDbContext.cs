@@ -22,17 +22,27 @@ namespace ProgrammeManagementSystem.Data
             // ── Indexes ─────────────────────────────────────
             modelBuilder.Entity<Module>()
                 .HasIndex(m => m.ModuleCode)
-                .IsUnique();
+                .IsUnique()
+                .HasDatabaseName("IX_Module_ModuleCode");
 
             modelBuilder.Entity<Student>()
                 .HasIndex(s => s.Email)
-                .IsUnique();
+                .IsUnique()
+                .HasDatabaseName("IX_Student_Email");
 
             modelBuilder.Entity<Lecturer>()
                 .HasIndex(l => l.Email)
-                .IsUnique();
+                .IsUnique()
+                .HasDatabaseName("IX_Lecturer_Email");
 
-            // ── Prevent cascade delete cycles ───────────────
+            // ── Table names (optional but explicit) ─────────
+            modelBuilder.Entity<Student>().ToTable("Students");
+            modelBuilder.Entity<Lecturer>().ToTable("Lecturers");
+            modelBuilder.Entity<Module>().ToTable("Modules");
+            modelBuilder.Entity<Registration>().ToTable("Registrations");
+            modelBuilder.Entity<ModuleAssignment>().ToTable("ModuleAssignments");
+
+            // ── Relationships with cascade delete ───────────
             modelBuilder.Entity<Registration>()
                 .HasOne(r => r.Student)
                 .WithMany(s => s.Registrations)
@@ -56,6 +66,17 @@ namespace ProgrammeManagementSystem.Data
                 .WithMany(m => m.ModuleAssignments)
                 .HasForeignKey(a => a.ModuleID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // ── Composite unique constraints (prevent duplicates) ──
+            modelBuilder.Entity<Registration>()
+                .HasIndex(r => new { r.StudentID, r.ModuleID })
+                .IsUnique()
+                .HasDatabaseName("IX_Registration_StudentModule");
+
+            modelBuilder.Entity<ModuleAssignment>()
+                .HasIndex(a => new { a.LecturerID, a.ModuleID })
+                .IsUnique()
+                .HasDatabaseName("IX_ModuleAssignment_LecturerModule");
         }
     }
 }

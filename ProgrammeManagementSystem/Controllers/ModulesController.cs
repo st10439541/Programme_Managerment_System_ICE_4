@@ -11,12 +11,15 @@ namespace ProgrammeManagementSystem.Controllers
         public ModulesController(ApplicationDbContext context) => _context = context;
 
         public async Task<IActionResult> Index()
-            => View(await _context.Modules
+        {
+            var modules = await _context.Modules
                 .Include(m => m.ModuleAssignments)
                 .ThenInclude(a => a.Lecturer)
                 .Include(m => m.Registrations)
                 .OrderBy(m => m.ModuleCode)
-                .ToListAsync());
+                .ToListAsync();
+            return View(modules);
+        }
 
         public async Task<IActionResult> Details(int? id)
         {
